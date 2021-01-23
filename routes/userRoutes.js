@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     console.error("%s ERROR Missing name or password in request body.", new Date().toISOString());
     res.status(400).send({error: "Missing parameter name or password in request body"});
   } else {
-    User.findOne({"name": req.body.name}, 'name pass -_id', (err, data) => {
+    User.findOne({"name": req.body.name}, 'name pass', (err, data) => {
       if (err) res.status(500).send(err);
       else {
         if (data === null || data === undefined) {
@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
           res.status(409).send({error: "Wrong password"})
         } else {
           console.log("%s INFO User authenticated", new Date().toISOString())
-          res.status(200).send("Successful")
+          res.status(200).send({name: data.name})
         }
       }
     });
