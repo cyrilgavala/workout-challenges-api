@@ -4,12 +4,12 @@ const Record = require('../models/record')
 
 router.get('/records', async (req, res) => {
   console.log('%s INFO Received %s request for records %s', new Date().toISOString(), req.method, req.body)
-  if (req.body === undefined || Object.keys(req.body).length === 0) {
-    console.error("%s ERROR Missing request body.", new Date().toISOString());
-    res.status(400).send({error: "Missing request body"});
-  } else if (req.body.user === null || req.body.user === undefined || req.body.challengeKey === null || req.body.challengeKey === undefined) {
-    console.error("%s ERROR Missing parameter in request body.", new Date().toISOString());
-    res.status(400).send({error: "Missing parameter in request body"});
+  if (req.query.user === undefined) {
+    console.error("%s ERROR Missing user parameter", new Date().toISOString());
+    res.status(400).send({error: "Missing user parameter"});
+  } else if (req.query.challengeKey === undefined) {
+    console.error("%s ERROR Missing challengeKey parameter", new Date().toISOString());
+    res.status(400).send({error: "Missing challengeKey parameter"});
   } else {
     Record.find({
       "user": req.body.user,
