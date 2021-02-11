@@ -3,7 +3,7 @@ const router = express.Router();
 const Record = require('../models/record')
 
 router.get('/records', async (req, res) => {
-  console.log('%s INFO Received %s request for records %s', new Date().toISOString(), req.method, req.body)
+  console.log('%s INFO Received %s request for records %s', new Date().toISOString(), req.method, req.query)
   if (req.query.user === undefined) {
     console.error("%s ERROR Missing user parameter", new Date().toISOString());
     res.status(400).send({error: "Missing user parameter"});
@@ -12,8 +12,8 @@ router.get('/records', async (req, res) => {
     res.status(400).send({error: "Missing challengeKey parameter"});
   } else {
     Record.find({
-      "user": req.body.user,
-      "challengeKey": req.body.challengeKey
+      "user": req.query.user,
+      "challengeKey": req.query.challengeKey
     }, 'challengeKey reps user date -_id', {sort: {date: -1}}, (err, data) => {
       if (err) res.status(500).send(err);
       else {
