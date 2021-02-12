@@ -50,4 +50,28 @@ router.put('/add-record', async (req, res) => {
   }
 })
 
+router.delete('/delete-record', async (req, res) => {
+  console.log('%s INFO Received %s request for deleting record %s', new Date().toISOString(), req.method, req.body)
+  if (req.body === undefined || Object.keys(req.body).length === 0) {
+    console.error("%s ERROR Missing request body.", new Date().toISOString());
+    res.status(400).send({error: "Missing request body"});
+  } else if (req.body.challengeKey === null || req.body.challengeKey === undefined
+    || req.body.user === null || req.body.user === undefined || req.body.date === null || req.body.date === undefined) {
+    console.error("%s ERROR Missing parameter in request body.", new Date().toISOString());
+    res.status(400).send({error: "Missing parameter in request body"});
+  } else {
+    Record.deleteOne({
+      "user": req.body.user,
+      "challengeKey": req.body.challengeKey,
+      "date": new Date(req.body.date)
+    }).then(r => {
+      console.log("%s INFO Result for deletion: %s", new Date().toISOString(), r);
+      res.status(200).send()
+    }).catch(err => {
+      console.error("%s ERROR %s", new Date().toISOString(), err);
+      res.status(500).send({error: "Deletion failed"})
+    });
+  }
+})
+
 module.exports = router;
