@@ -19,7 +19,7 @@ router.put('/register', async (req, res) => {
           const user = new User(req.body);
           User.create(user).then(r => {
             console.log("%s INFO User registered %s", new Date().toISOString(), r);
-            res.status(200).send();
+            res.status(200).send({name: user.name});
           }).catch(err => {
             console.error("%s ERROR %s", new Date().toISOString(), err);
             res.status(500).send({error: "Registration failed"})

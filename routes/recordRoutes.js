@@ -14,7 +14,7 @@ router.get('/records', async (req, res) => {
     Record.find({
       "user": req.query.user,
       "challengeKey": req.query.challengeKey
-    }, 'challengeKey reps user date -_id', {sort: {date: -1}}, (err, data) => {
+    }, 'challengeKey reps user date -_id', {sort: {date: 1}}, (err, data) => {
       if (err) res.status(500).send(err);
       else {
         if (data === null || data === undefined) {
