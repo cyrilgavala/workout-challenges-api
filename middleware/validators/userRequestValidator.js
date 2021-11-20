@@ -6,6 +6,8 @@ module.exports = (req, res, next) => {
         if (invalidBodyParam(req.body.name) || invalidBodyParam(req.body.pass)) {
             console.error("%s ERROR Missing name or password in request body.", new Date().toISOString());
             res.status(400).send({error: "Missing parameter name or pass in request body"});
+        } else {
+            next()
         }
     } else {
         next()
