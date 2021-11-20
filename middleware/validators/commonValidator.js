@@ -9,4 +9,4 @@ const missingBody = (req, res) => {
     }
 }
 
-export {invalidBodyParam, missingBody}
+module.exports = {invalidBodyParam, missingBody}
