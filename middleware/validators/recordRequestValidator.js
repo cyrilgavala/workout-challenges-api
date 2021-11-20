@@ -1,16 +1,16 @@
-const {missingBody, invalidBodyParam} = require("./commonValidator");
+const utils = require('middleware/validators/validatorUtils').ValidatorUtils;
 
 const validateBodyForPut = (req, res) => {
-    missingBody(req, res)
-    if (invalidBodyParam(req.body.challengeKey) || invalidBodyParam(req.body.reps) || invalidBodyParam(req.body.user) || invalidBodyParam(req.body.date)) {
+    utils.missingBody(req, res)
+    if (utils.invalidBodyParam(req.body.challengeKey) || utils.invalidBodyParam(req.body.reps) || utils.invalidBodyParam(req.body.user) || utils.invalidBodyParam(req.body.date)) {
         console.error("%s ERROR Missing parameter in request req.body.", new Date().toISOString());
         res.status(400).send({error: "Missing parameter in request req.body"});
     }
 }
 
 const validateBodyForDelete = (req, res) => {
-    missingBody(req, res)
-    if (invalidBodyParam(req.body.challengeKey) || invalidBodyParam(req.body.user) || invalidBodyParam(req.body.date)) {
+    utils.missingBody(req, res)
+    if (utils.invalidBodyParam(req.body.challengeKey) || utils.invalidBodyParam(req.body.user) || utils.invalidBodyParam(req.body.date)) {
         console.error("%s ERROR Missing parameter in request req.body.", new Date().toISOString());
         res.status(400).send({error: "Missing parameter in request req.body"});
     }

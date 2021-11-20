@@ -1,4 +1,4 @@
-const {missingBody, invalidBodyParam} = require("./commonValidator");
+const {missingBody, invalidBodyParam} = require("./validatorUtils");
 
 module.exports = (req, res, next) => {
     if (req.method === 'PUT' || req.method === 'POST') {
