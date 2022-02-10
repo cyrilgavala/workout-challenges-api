@@ -1,33 +1,23 @@
-const {missingBody, invalidBodyParam} = require("./validatorUtils");
+const {validateBody, validateParameter} = require("../../utils/validatorUtils")
 
 module.exports = (req, res, next) => {
+    let errors = []
     if (req.method === 'GET') {
-        if (req.query.user === undefined) {
-            console.error("%s ERROR Missing user parameter", new Date().toISOString());
-            res.status(400).send({error: "Missing user parameter"});
-        } else if (req.query.challengeKey === undefined) {
-            console.error("%s ERROR Missing challengeKey parameter", new Date().toISOString());
-            res.status(400).send({error: "Missing challengeKey parameter"});
-        } else {
-            next()
-        }
+        errors.push(validateParameter(req.query.user, "user"))
+        errors.push(validateParameter(req.query.challengeKey, "challengeKey"))
     } else if (req.method === 'PUT') {
-        missingBody(req, res)
-        if (invalidBodyParam(req.body.challengeKey) || invalidBodyParam(req.body.reps) || invalidBodyParam(req.body.user) || invalidBodyParam(req.body.date)) {
-            console.error("%s ERROR Missing parameter in request req.body.", new Date().toISOString());
-            res.status(400).send({error: "Missing parameter in request req.body"});
-        } else {
-            next()
-        }
+        errors.push(validateBody(req.body))
+        errors.push(validateParameter(req.body.challengeKey, "challengeKey"))
+        errors.push(validateParameter(req.body.reps, "reps"))
+        errors.push(validateParameter(req.body.user, "user"))
+        errors.push(validateParameter(req.body.date, "date"))
     } else if (req.method === 'DELETE') {
-        missingBody(req, res)
-        if (invalidBodyParam(req.body.challengeKey) || invalidBodyParam(req.body.user) || invalidBodyParam(req.body.date)) {
-            console.error("%s ERROR Missing parameter in request req.body.", new Date().toISOString());
-            res.status(400).send({error: "Missing parameter in request req.body"});
-        } else {
-            next()
-        }
-    } else {
+        errors.push(validateParameter(req.query.id, "id"))
+    }
+    errors = errors.filter(val => val != null)
+    if (errors.length === 0) {
         next()
+    } else {
+        res.status(400).send({errors: errors})
     }
 }

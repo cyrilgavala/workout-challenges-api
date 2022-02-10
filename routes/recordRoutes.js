@@ -1,54 +1,52 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const Record = require('../models/record')
-const recordRequestValidator = require("../middleware/validators/recordRequestValidator");
+const logger = require("../logger")
 
-router.use(recordRequestValidator)
+router.use(require("../middleware/validators/recordRequestValidator"))
 
-router.get('/records', async (req, res) => {
-    console.log('%s INFO Received %s request for records %s', new Date().toISOString(), req.method, req.query)
+router.get('/', async (req, res) => {
+    logger.info('Received GET request')
     Record.find({
         "user": req.query.user,
         "challengeKey": req.query.challengeKey
-    }, 'challengeKey reps user date -_id', {sort: {date: 1}}, (err, data) => {
-        if (err) res.status(500).send(err);
+    }, '_id challengeKey reps user date', {sort: {date: 1}}, (err, data) => {
+        if (err) res.status(500).send(err)
         else {
             if (data === null || data === undefined) {
-                console.log("%s INFO No records found", new Date().toISOString());
+                logger.debug("No records found")
                 res.status(200).send([])
             } else {
-                console.log("%s INFO Records found", new Date().toISOString())
+                logger.debug("Records found")
                 res.status(200).send(data)
             }
         }
-    });
+    })
 })
 
-router.put('/add-record', async (req, res) => {
-    console.log('%s INFO Received %s request for adding record %s', new Date().toISOString(), req.method, req.body)
-    const record = new Record(req.body);
+router.put('/', async (req, res) => {
+    logger.info('Received PUT request')
+    const record = new Record(req.body)
     Record.create(record).then(r => {
-        console.log("%s INFO Record inserted %s", new Date().toISOString(), r);
-        res.status(200).send();
+        logger.debug("Record saved")
+        res.status(200).send(r)
     }).catch(err => {
-        console.error("%s ERROR %s", new Date().toISOString(), err);
-        res.status(500).send({error: "Insertion failed"})
-    });
+        logger.error("Saving record failed " + err)
+        res.status(500).send({error: "Saving failed"})
+    })
 })
 
-router.delete('/delete-record', async (req, res) => {
-    console.log('%s INFO Received %s request for deleting record %s', new Date().toISOString(), req.method, req.body)
+router.delete('/', async (req, res) => {
+    logger.info('Received DELETE request', req.query?.id)
     Record.deleteOne({
-        "user": req.body.user,
-        "challengeKey": req.body.challengeKey,
-        "date": new Date(req.body.date)
-    }).then(r => {
-        console.log("%s INFO Result for deletion: %s", new Date().toISOString(), r);
+        "_id": req.query.id
+    }).then(() => {
+        logger.debug("Record deleted")
         res.status(200).send()
     }).catch(err => {
-        console.error("%s ERROR %s", new Date().toISOString(), err);
+        logger.error("Deleting record failed" + err)
         res.status(500).send({error: "Deletion failed"})
-    });
+    })
 })
 
-module.exports = router;
+module.exports = router
