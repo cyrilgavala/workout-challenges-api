@@ -1,4 +1,4 @@
-const logger = require("../logger")
+const logger = require("../logger")("validationUtils")
 
 const validateParameter = (paramValue, paramLabel) => {
     if (paramValue === null || paramValue === undefined) {

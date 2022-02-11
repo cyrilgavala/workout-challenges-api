@@ -1,53 +1,28 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../models/user')
-const logger = require("../logger")
+const userService = require("../service/userService")
+const logger = require("../logger")("userRoutes")
 
 router.use(require('../middleware/validators/userRequestValidator'))
 
+const handleResult = (result, res) => {
+    if (result !== undefined) {
+        if (result.name) {
+            res.status(200).send({name: result.name})
+        } else if (result.status && result.error) {
+            res.status(result.status).send({error: result.error})
+        }
+    }
+}
+
 router.put('/register', async (req, res) => {
     logger.info('Received registration request')
-    User.findOne({"name": req.body.name}, 'name', (err, data) => {
-        if (err) {
-            logger.error(err)
-            res.status(500).send(err)
-        } else {
-            if (data === null || data === undefined) {
-                const user = new User(req.body)
-                User.create(user).then(() => {
-                    logger.debug("User registered")
-                    res.status(200).send({name: data.name})
-                }).catch(err => {
-                    logger.error("Registration failed" + err)
-                    res.status(500).send({error: "Registration failed"})
-                })
-            } else {
-                logger.error("User already exists")
-                res.status(409).send({error: "User already exists"})
-            }
-        }
-    })
+    userService.registerUser(req.body).then(result => handleResult(result, res))
 })
 
 router.post('/login', async (req, res) => {
     logger.info('Received login request')
-    User.findOne({"name": req.body.name}, 'name pass', (err, data) => {
-        if (err) {
-            logger.error(err)
-            res.status(500).send(err)
-        } else {
-            if (data === null || data === undefined) {
-                logger.error("User not registered")
-                res.status(404).send({error: "User not registered"})
-            } else if (data.pass !== req.body.pass) {
-                logger.error("Wrong password")
-                res.status(409).send({error: "Wrong password"})
-            } else {
-                logger.debug("User authenticated")
-                res.status(200).send({name: data.name})
-            }
-        }
-    })
+    userService.loginUser(req.body.name, req.body.pass).then(result => handleResult(result, res))
 })
 
 module.exports = router
