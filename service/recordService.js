@@ -10,8 +10,9 @@ async function getRecordsByUserAndChallengeKey(user, challengeKey) {
     }
 }
 
-async function createRecord(body) {
+async function createRecord(body, user) {
     try {
+        body.user = user
         return recordDao.createRecord(body)
     } catch (err) {
         handleError(500, "Creation of record failed ", err)
