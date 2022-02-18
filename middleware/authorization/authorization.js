@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
             if (err) {
                 return res.sendStatus(403)
             }
-            req.user = user
+            req.user = user.username
             next()
         });
     } else {

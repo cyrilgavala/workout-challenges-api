@@ -10,10 +10,10 @@ async function registerUser(body) {
             const createdUser = await userDao.createUser(body)
             return {name: createdUser.name}
         } else {
-            handleError(409, "User already exists", "")
+            return handleError(409, "User already exists", "")
         }
     } catch (err) {
-        handleError(500, "Registration failed ", err)
+        return handleError(500, "Registration failed ", err)
     }
 }
 
@@ -23,14 +23,14 @@ async function loginUser(name, pass) {
             return data
         })
         if (data === null || data === undefined) {
-            handleError(404, "User not registered", "")
+            return handleError(404, "User not registered", "")
         } else if (data.pass !== pass) {
-            handleError(409, "Wrong password", "")
+            return handleError(409, "Wrong password", "")
         } else {
             return {name: data.name}
         }
     } catch (err) {
-        handleError(500, "Login failed ", err)
+        return handleError(500, "Login failed ", err)
     }
 }
 

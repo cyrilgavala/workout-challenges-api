@@ -7,13 +7,11 @@ const jwt = require("jsonwebtoken")
 router.use(require('../middleware/validators/userRequestValidator'))
 
 const handleResult = (result, res) => {
-    if (result !== undefined) {
-        if (result.name) {
-            const accessToken = jwt.sign(result.name, process.env.TOKEN_SECRET)
-            res.status(200).send({name: result.name, accessToken: accessToken})
-        } else if (result.status && result.error) {
-            res.status(result.status).send({error: result.error})
-        }
+    if (result.name) {
+        const accessToken = jwt.sign({username: result.name}, process.env.TOKEN_SECRET)
+        res.status(200).send({name: result.name, accessToken: accessToken})
+    } else if (result.status && result.error) {
+        res.status(result.status).send({error: result.error})
     }
 }
 
